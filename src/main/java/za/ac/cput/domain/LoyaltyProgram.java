@@ -80,6 +80,10 @@ public class LoyaltyProgram {
             this.rewards = new ArrayList<>();
         }
 
+        public Builder() {
+
+        }
+
         public Builder setPoints(int points) {
             this.points = points;
             return this;

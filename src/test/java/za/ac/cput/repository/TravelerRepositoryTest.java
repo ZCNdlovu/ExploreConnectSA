@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LoyaltyProgramRepositoryTest {
+class TravelerRepositoryTest {
 
     @Test
     void getRepository() {
@@ -29,5 +29,4 @@ class LoyaltyProgramRepositoryTest {
     @Test
     void getAll() {
     }
-
 }

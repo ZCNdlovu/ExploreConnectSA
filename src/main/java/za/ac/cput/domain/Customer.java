@@ -21,7 +21,7 @@ public class Customer extends User {
     private List<Booking> bookingHistory;
     private List<Review> reviews;
 
-    private Customer(Builder builder) {
+    public Customer(Builder builder) {
         // User fields
         this.userId = builder.userId;
         this.firstName = builder.firstName;
@@ -48,6 +48,10 @@ public class Customer extends User {
         this.savedPayments = builder.savedPayments != null ? builder.savedPayments : new ArrayList<>();
         this.bookingHistory = builder.bookingHistory != null ? builder.bookingHistory : new ArrayList<>();
         this.reviews = builder.reviews != null ? builder.reviews : new ArrayList<>();
+    }
+
+    public Customer() {
+
     }
 
     // Getters

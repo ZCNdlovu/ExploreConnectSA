@@ -47,7 +47,7 @@ public class PaymentDetails {
     // Business methods
     public boolean processPayment() {
         this.status = PaymentStatus.PAID;
-        this.transactionId = "TXN-" + IdGenerator.generateId().toString().substring(0, 10);
+        this.transactionId = "TXN-" + IdGenerator.getInstance().toString().substring(0, 10);
         this.paymentDate = LocalDateTime.now();
         this.lastUpdated = LocalDateTime.now();
         return true;

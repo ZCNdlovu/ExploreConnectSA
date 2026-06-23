@@ -1,8 +1,13 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Zamandlovu C Ndlovu (211204803)
+
+   Date: 21 June 2026
+*/
 import jakarta.persistence.*;
-import jakarta.persistence.Embedded;
-import za.ac.cput.util.IdGenerator;
 
 import java.util.regex.Pattern;
 
@@ -74,11 +79,6 @@ public class ContactDetails {
         private String emergencyContact;
         private String emergencyPhone;
 
-        public Builder(String cellNumber, String email) {
-            this.contactId = IdGenerator.getInstance().generateId();
-            this.cellNumber = cellNumber;
-            this.email = email;
-        }
 
         public Builder setHomePhone(String homePhone) {
             this.homePhone = homePhone;

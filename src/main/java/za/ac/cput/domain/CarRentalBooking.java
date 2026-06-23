@@ -1,11 +1,23 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Kabelo Moloko (230117015)
+
+   Date: 21 June 2026
+*/
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+@Entity
+@PrimaryKeyJoinColumn(name = "booking_id")
 public class CarRentalBooking extends TransportBooking {
+
+    @Id
     private String rentalId;
     private String rentalCompany;
     private String carModel;
@@ -24,6 +36,8 @@ public class CarRentalBooking extends TransportBooking {
     private String fuelPolicy;
     private int mileageLimit;
     private double securityDeposit;
+
+    protected  CarRentalBooking(){}
 
     private CarRentalBooking(Builder builder) {
         // Booking fields
@@ -106,7 +120,7 @@ public class CarRentalBooking extends TransportBooking {
 
     public Invoice returnCar() {
         // Calculate any additional charges
-        return new Invoice.Builder(this).build();
+        return new Invoice.Builder().build();
     }
 
     public void reportIssue(String issue) {
@@ -127,7 +141,7 @@ public class CarRentalBooking extends TransportBooking {
 
     @Override
     public Invoice generateInvoice() {
-        return new Invoice.Builder(this).build();
+        return new Invoice.Builder().build();
     }
 
     @Override
@@ -185,23 +199,7 @@ public class CarRentalBooking extends TransportBooking {
         private int mileageLimit;
         private double securityDeposit;
 
-        public Builder(String rentalCompany, String carModel,
-                       LocalDateTime pickupDate, LocalDateTime returnDate) {
-            this.bookingId = IdGenerator.getInstance().generateId();
-            this.bookingReference = "CAR-" + IdGenerator.getInstance().toString().substring(0, 8);
-            this.bookingDate = LocalDateTime.now();
-            this.lastModified = LocalDateTime.now();
-            this.status = BookingStatus.PENDING;
-            this.currency = "ZAR";
-            this.bookingTime = LocalDateTime.now();
 
-            this.rentalId = IdGenerator.getInstance().toString();
-            this.rentalCompany = rentalCompany;
-            this.provider = rentalCompany;
-            this.carModel = carModel;
-            this.pickupDate = pickupDate;
-            this.returnDate = returnDate;
-        }
 
         public Builder setCarCategory(String carCategory) {
             this.carCategory = carCategory;

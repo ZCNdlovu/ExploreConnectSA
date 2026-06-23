@@ -2,53 +2,62 @@ package za.ac.cput.factory;
 
 import za.ac.cput.domain.*;
 import za.ac.cput.util.Helper;
-
 import java.time.LocalDateTime;
-import java.util.List;
+import za.ac.cput.util.IdGenerator;
+
 
 public class CustomerFactory {
-    // Basic Customer with minimal required fields
+
+    private static final IdGenerator idGenerator = new IdGenerator();
+
+    /**
+     * Creates a basic customer with minimal required fields
+     */
     public static Customer createCustomer(String firstName, String lastName,
-                                          String email, String password) {
+                                          String email, String password,
+                                          String phoneNumber) {
+        // Validate required fields
         Helper.requireNotEmptyOrNull(firstName, "First Name");
         Helper.requireNotEmptyOrNull(lastName, "Last Name");
-        Helper.requireNotEmptyOrNull(email, "Email");
+        Helper.requireValidEmail(email, "Email");
         Helper.requireNotEmptyOrNull(password, "Password");
+        Helper.requireValidSouthAfricanPhone(phoneNumber, "Phone Number");
 
-        if (!Helper.isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format: " + email);
-        }
+        // Generate ID
+        String customerId = idGenerator.generateId("CUS");
 
-        return new Customer.Builder(firstName, lastName, email, password)
+        return new Customer.Builder()
+                .setUserId(Long.parseLong(customerId.substring(3)))
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setEmail(email)
+                .setPassword(password)
                 .build();
     }
 
-    // Customer with identity details
+    /**
+     * Creates a customer with identity details
+     */
     public static Customer createCustomerWithIdentity(String firstName, String lastName,
                                                       String email, String password,
+                                                      String phoneNumber,
                                                       IdentityType identityType,
                                                       String identityNumber,
                                                       LocalDateTime dateOfBirth,
                                                       String nationality) {
-        Helper.requireNotEmptyOrNull(firstName, "First Name");
-        Helper.requireNotEmptyOrNull(lastName, "Last Name");
-        Helper.requireNotEmptyOrNull(email, "Email");
-        Helper.requireNotEmptyOrNull(password, "Password");
-        Helper.requireNonNull(identityType, "Identity Type");
-        Helper.requireNotEmptyOrNull(identityNumber, "Identity Number");
-        Helper.requireNonNull(dateOfBirth, "Date of Birth");
+        Customer customer = createCustomer(firstName, lastName, email, password, phoneNumber);
+
+        // Validate identity details
+        if (identityType == IdentityType.RSA_ID) {
+            Helper.requireValidSouthAfricanId(identityNumber, "RSA ID");
+        } else if (identityType == IdentityType.PASSPORT) {
+            Helper.requireValidPassportNumber(identityNumber, "Passport Number");
+        }
+        Helper.requireNonNullDate(dateOfBirth, "Date of Birth");
         Helper.requireNotEmptyOrNull(nationality, "Nationality");
 
-        if (!Helper.isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format: " + email);
-        }
-
-        // Validate South African ID if applicable
-        if (identityType == IdentityType.RSA_ID) {
-            Helper.isValidSouthAfricanId(identityNumber);
-        }
-
-        return new Customer.Builder(firstName, lastName, email, password)
+        return new Customer.Builder()
+                .copy(customer)
                 .setIdentityType(identityType)
                 .setIdentityNumber(identityNumber)
                 .setDateOfBirth(dateOfBirth)
@@ -56,36 +65,23 @@ public class CustomerFactory {
                 .build();
     }
 
-    // Customer with all details including preferences
+    /**
+     * Creates a full customer with all details
+     */
     public static Customer createFullCustomer(String firstName, String lastName,
                                               String email, String password,
+                                              String phoneNumber,
                                               IdentityType identityType,
                                               String identityNumber,
                                               LocalDateTime dateOfBirth,
                                               String nationality,
-                                              LanguageType preferredLanguage,
-                                              ContactDetails contacts,
-                                              List<Address> addresses) {
-        Customer customer = createCustomerWithIdentity(firstName, lastName, email, password,
-                identityType, identityNumber, dateOfBirth, nationality);
+                                              LanguageType preferredLanguage) {
+        Customer customer = createCustomerWithIdentity(firstName, lastName, email,
+                password, phoneNumber, identityType, identityNumber, dateOfBirth, nationality);
 
-        return new Customer.Builder(customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPassword())
-                .setPreferredLanguage(preferredLanguage)
-                .setContacts(contacts)
-                .setAddresses(addresses)
-                .build();
-    }
-
-    // Customer with loyalty program
-    public static Customer createCustomerWithLoyalty(String firstName, String lastName,
-                                                     String email, String password,
-                                                     LoyaltyProgram loyaltyProgram) {
-        Customer customer = createCustomer(firstName, lastName, email, password);
-
-        return new Customer.Builder(firstName, lastName, email, password)
-                .setLoyaltyProgram(loyaltyProgram)
+        return new Customer.Builder()
                 .copy(customer)
+                .setPreferredLanguage(preferredLanguage)
                 .build();
     }
 }

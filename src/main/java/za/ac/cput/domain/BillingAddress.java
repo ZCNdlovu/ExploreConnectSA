@@ -1,5 +1,12 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Entle Mayezo	(230076238)
+
+   Date: 21 June 2026
+*/
 import jakarta.persistence.Embeddable;
 
 @Embeddable

@@ -1,5 +1,12 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Alakhe Mxakato (230485316)
+
+   Date: 21 June 2026
+*/
 import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 

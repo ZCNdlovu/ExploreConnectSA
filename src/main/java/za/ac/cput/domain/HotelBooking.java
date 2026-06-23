@@ -1,34 +1,51 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Kabelo Moloko (230117015)
+
+   Date: 21 June 2026
+*/
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+@Entity
+@PrimaryKeyJoinColumn(name = "booking_id")
 public class HotelBooking extends Booking {
+    @Id
     private String hotelId;
     private String hotelName;
     private String location;
     private String hotelAddress;
     private String hotelPhone;
     private int starRating;
-    private CancellationPolicy cancellationPolicyObj;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
+    @Enumerated(EnumType.STRING)
     private RoomTypeAvailable roomType;
+    @Enumerated(EnumType.STRING)
     private RoomTypeByOccupancy occupancy;
+    @Enumerated(EnumType.STRING)
     private RoomTypeByLayout layout;
+    @Enumerated(EnumType.STRING)
     private RoomTypeByBedSize bedSize;
+    @ElementCollection
     private List<String> roomNumbers;
     private boolean breakfastIncluded;
     private boolean wifiIncluded;
     private boolean parkingIncluded;
+    @ElementCollection
     private List<String> specialRequests;
-    private CancellationPolicy cancellationPolicy;
+    private String cancellationPolicyObj;
+
+    protected HotelBooking(){}
 
     private HotelBooking(Builder builder) {
-        // Booking fields
         this.bookingId = builder.bookingId;
         this.bookingReference = builder.bookingReference;
         this.bookingDate = builder.bookingDate;
@@ -41,8 +58,7 @@ public class HotelBooking extends Booking {
         this.bookedBy = builder.bookedBy;
         this.travelers = builder.travelers;
         this.payment = builder.payment;
-        this.cancellationPolicyObj = builder.cancellationPolicyObj;
-
+        this.cancellationPolicy = builder.cancellationPolicy;
         // Hotel specific fields
         this.hotelId = builder.hotelId;
         this.hotelName = builder.hotelName;
@@ -61,29 +77,29 @@ public class HotelBooking extends Booking {
         this.wifiIncluded = builder.wifiIncluded;
         this.parkingIncluded = builder.parkingIncluded;
         this.specialRequests = builder.specialRequests != null ? builder.specialRequests : new ArrayList<>();
-        this.cancellationPolicy = builder.cancellationPolicy;
+        this.cancellationPolicyObj = builder.cancellationPolicyObj;
     }
 
-    // Getters
-    public String getHotelId() { return hotelId; }
-    public String getHotelName() { return hotelName; }
-    public String getLocation() { return location; }
-    public String getHotelAddress() { return hotelAddress; }
-    public String getHotelPhone() { return hotelPhone; }
-    public int getStarRating() { return starRating; }
-    public LocalDateTime getCheckIn() { return checkIn; }
-    public LocalDateTime getCheckOut() { return checkOut; }
-    public RoomTypeAvailable getRoomType() { return roomType; }
-    public RoomTypeByOccupancy getOccupancy() { return occupancy; }
-    public RoomTypeByLayout getLayout() { return layout; }
-    public RoomTypeByBedSize getBedSize() { return bedSize; }
-    public List<String> getRoomNumbers() { return roomNumbers; }
-    public boolean isBreakfastIncluded() { return breakfastIncluded; }
-    public boolean isWifiIncluded() { return wifiIncluded; }
-    public boolean isParkingIncluded() { return parkingIncluded; }
-    public List<String> getSpecialRequests() { return specialRequests; }
-    public CancellationPolicy getCancellationPolicy() { return cancellationPolicy; }
-    public CancellationPolicy getCancellationPolicyObj(){
+    public String getHotelId() {return hotelId;}
+    public String getHotelName() {return hotelName;}
+    public String getLocation() {return location;}
+    public String getHotelAddress() {return hotelAddress;}
+    public String getHotelPhone() {return hotelPhone;}
+    public int getStarRating() {return starRating;}
+    public LocalDateTime getCheckIn() {return checkIn;}
+    public LocalDateTime getCheckOut() {return checkOut;}
+    public RoomTypeAvailable getRoomType() {return roomType;}
+    public RoomTypeByOccupancy getOccupancy() {return occupancy;}
+    public RoomTypeByLayout getLayout() {return layout;}
+    public RoomTypeByBedSize getBedSize() {return bedSize;}
+    public List<String> getRoomNumbers() {return roomNumbers;}
+    public boolean isBreakfastIncluded() {return breakfastIncluded;}
+    public boolean isWifiIncluded() {return wifiIncluded;}
+    public boolean isParkingIncluded() {return parkingIncluded;}
+    public List<String> getSpecialRequests() {return specialRequests;}
+
+
+    public String getCancellationPolicyObj() {
         return cancellationPolicyObj;
     }
 
@@ -118,14 +134,12 @@ public class HotelBooking extends Booking {
     }
 
     @Override
-    public String getBookingDetails() {
-        return String.format("Hotel %s in %s from %s to %s",
-                hotelName, location, checkIn.toLocalDate(), checkOut.toLocalDate());
-    }
+    public String getBookingDetails() {return String.format("Hotel %s in %s from %s to %s",
+                hotelName, location, checkIn.toLocalDate(), checkOut.toLocalDate());}
 
     @Override
     public Invoice generateInvoice() {
-        return new Invoice.Builder(this).build();
+        return new Invoice.Builder().build();
     }
 
     @Override
@@ -155,7 +169,7 @@ public class HotelBooking extends Booking {
         private Customer bookedBy;
         private Traveler travelers;
         private PaymentDetails payment;
-        private CancellationPolicy cancellationPolicyObj;
+        private CancellationPolicy cancellationPolicy;
 
         // Hotel specific fields
         private String hotelId;
@@ -175,25 +189,86 @@ public class HotelBooking extends Booking {
         private boolean wifiIncluded;
         private boolean parkingIncluded;
         private List<String> specialRequests;
-        private CancellationPolicy cancellationPolicy;
+        private String cancellationPolicyObj;
 
-        public Builder(String hotelName, String location,
-                       LocalDateTime checkIn, LocalDateTime checkOut) {
-            this.bookingId = IdGenerator.getInstance().generateId();
-            this.bookingReference = "HTL-" + IdGenerator.getInstance().toString().substring(0, 8);
-            this.bookingDate = LocalDateTime.now();
-            this.lastModified = LocalDateTime.now();
-            this.status = BookingStatus.PENDING;
-            this.currency = "ZAR";
 
-            this.hotelName = hotelName;
-            this.location = location;
-            this.checkIn = checkIn;
-            this.checkOut = checkOut;
+        public Builder setBookingId(Long bookingId) {
+            this.bookingId = bookingId;
+            return this;
+        }
+
+        public Builder setBookingReference(String bookingReference) {
+            this.bookingReference = bookingReference;
+            return this;
+        }
+
+        public Builder setBookingDate(LocalDateTime bookingDate) {
+            this.bookingDate = bookingDate;
+            return this;
+        }
+
+        public Builder setLastModified(LocalDateTime lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Builder setStatus(BookingStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setSubtotal(double subtotal) {
+            this.subtotal = subtotal;
+            return this;
+        }
+
+        public Builder setTaxes(double taxes) {
+            this.taxes = taxes;
+            return this;
+        }
+
+        public Builder setTotalPrice(double totalPrice) {
+            this.totalPrice = totalPrice;
+            return this;
+        }
+
+        public Builder setCurrency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public Builder setBookedBy(Customer bookedBy) {
+            this.bookedBy = bookedBy;
+            return this;
+        }
+
+        public Builder setTravelers(Traveler travelers) {
+            this.travelers = travelers;
+            return this;
+        }
+
+        public Builder setPayment(PaymentDetails payment) {
+            this.payment = payment;
+            return this;
+        }
+
+        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
+            this.cancellationPolicy = cancellationPolicy;
+            return this;
         }
 
         public Builder setHotelId(String hotelId) {
             this.hotelId = hotelId;
+            return this;
+        }
+
+        public Builder setHotelName(String hotelName) {
+            this.hotelName = hotelName;
+            return this;
+        }
+
+        public Builder setLocation(String location) {
+            this.location = location;
             return this;
         }
 
@@ -209,6 +284,16 @@ public class HotelBooking extends Booking {
 
         public Builder setStarRating(int starRating) {
             this.starRating = starRating;
+            return this;
+        }
+
+        public Builder setCheckIn(LocalDateTime checkIn) {
+            this.checkIn = checkIn;
+            return this;
+        }
+
+        public Builder setCheckOut(LocalDateTime checkOut) {
+            this.checkOut = checkOut;
             return this;
         }
 
@@ -237,14 +322,6 @@ public class HotelBooking extends Booking {
             return this;
         }
 
-        public Builder addRoomNumber(String roomNumber) {
-            if (this.roomNumbers == null) {
-                this.roomNumbers = new ArrayList<>();
-            }
-            this.roomNumbers.add(roomNumber);
-            return this;
-        }
-
         public Builder setBreakfastIncluded(boolean breakfastIncluded) {
             this.breakfastIncluded = breakfastIncluded;
             return this;
@@ -265,51 +342,8 @@ public class HotelBooking extends Booking {
             return this;
         }
 
-        public Builder addSpecialRequest(String request) {
-            if (this.specialRequests == null) {
-                this.specialRequests = new ArrayList<>();
-            }
-            this.specialRequests.add(request);
-            return this;
-        }
-
-        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
-            this.cancellationPolicy = cancellationPolicy;
-            return this;
-        }
-
-        public Builder setBookedBy(Customer bookedBy) {
-            this.bookedBy = bookedBy;
-            return this;
-        }
-
-        public Builder setTravelers(Traveler travelers) {
-            this.travelers = travelers;
-            return this;
-        }
-
-        public Builder setPayment(PaymentDetails payment) {
-            this.payment = payment;
-            return this;
-        }
-
-        public Builder setCancellationPolicyObj(CancellationPolicy cancellationPolicyObj) {
+        public Builder setCancellationPolicyObj(String cancellationPolicyObj) {
             this.cancellationPolicyObj = cancellationPolicyObj;
-            return this;
-        }
-
-        public Builder setSubtotal(double subtotal) {
-            this.subtotal = subtotal;
-            return this;
-        }
-
-        public Builder setTaxes(double taxes) {
-            this.taxes = taxes;
-            return this;
-        }
-
-        public Builder setTotalPrice(double totalPrice) {
-            this.totalPrice = totalPrice;
             return this;
         }
 
@@ -326,7 +360,7 @@ public class HotelBooking extends Booking {
             this.bookedBy = hotelBooking.bookedBy;
             this.travelers = hotelBooking.travelers;
             this.payment = hotelBooking.payment;
-            this.cancellationPolicyObj = hotelBooking.cancellationPolicyObj;
+            this.cancellationPolicy = hotelBooking.cancellationPolicy;
 
             this.hotelId = hotelBooking.hotelId;
             this.hotelName = hotelBooking.hotelName;
@@ -345,7 +379,7 @@ public class HotelBooking extends Booking {
             this.wifiIncluded = hotelBooking.wifiIncluded;
             this.parkingIncluded = hotelBooking.parkingIncluded;
             this.specialRequests = hotelBooking.specialRequests;
-            this.cancellationPolicy = hotelBooking.cancellationPolicy;
+            this.cancellationPolicyObj = hotelBooking.cancellationPolicyObj;
             return this;
         }
 

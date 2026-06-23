@@ -1,7 +1,13 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Alakhe Mxakato (230485316)
+
+   Date: 21 June 2026
+*/
 import jakarta.persistence.*;
-import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -78,13 +84,7 @@ public class LoyaltyProgram {
         private LocalDateTime joinDate;
         private List<String> rewards;
 
-        public Builder(int points, String tier, LocalDateTime joinDate, List<String> rewards) {
-            this.programId = IdGenerator.getInstance().generateId();
-            this.points = 0;
-            this.tier = "BRONZE";
-            this.joinDate = LocalDateTime.now();
-            this.rewards = new ArrayList<>();
-        }
+
 
         public Builder setProgramId(Long programId) {
             this.programId = programId;

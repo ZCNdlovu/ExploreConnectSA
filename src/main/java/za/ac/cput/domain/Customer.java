@@ -1,5 +1,12 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Zamandlovu C Ndlovu (211204803)
+
+   Date: 21 June 2026
+*/
 import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
@@ -64,9 +71,6 @@ public class Customer extends User {
         this.reviews = builder.reviews != null ? builder.reviews : new ArrayList<>();
     }
 
-    public Customer() {
-
-    }
 
     // Getters
     public IdentityType getIdentityType() { return identityType; }

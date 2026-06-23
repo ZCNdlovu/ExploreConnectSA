@@ -1,14 +1,26 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Kabelo Moloko (230117015)
+
+   Date: 21 June 2026
+*/
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+@Entity
+@PrimaryKeyJoinColumn(name = "booking_id")
 public class FlightBooking  extends Booking {
+    @Id
     private String flightNumber;
     private String airline;
+    @Enumerated(EnumType.STRING)
     private FJourney journeyType;
     private String fromLocation;
     private String toLocation;
@@ -16,15 +28,21 @@ public class FlightBooking  extends Booking {
     private LocalDateTime arrivalTime;
     private String departureTerminal;
     private String arrivalTerminal;
+    @Enumerated(EnumType.STRING)
     private FBookingClass bookingClass;
     private boolean isDirectFlight;
     private int stopOvers;
+    @Enumerated(EnumType.STRING)
     private FlightType aircraftType;
     private String seatNumbers;
+    @ElementCollection
     private List<String> mealPreferences;
+    @ElementCollection
     private List<String> specialAssistance;
     private double baggageAllowance;
     private boolean travelInsurance;
+
+    protected FlightBooking(){}
 
     private FlightBooking(Builder builder) {
         this.bookingId = builder.bookingId;
@@ -124,7 +142,7 @@ public class FlightBooking  extends Booking {
 
     @Override
     public Invoice generateInvoice() {
-        return new Invoice.Builder(this).build();
+        return new Invoice.Builder().build();
     }
 
     @Override
@@ -177,21 +195,100 @@ public class FlightBooking  extends Booking {
         private double baggageAllowance;
         private boolean travelInsurance;
 
-        public Builder(String flightNumber, String airline,
-                       String fromLocation, String toLocation,
-                       LocalDateTime departureTime) {
-            this.bookingId = IdGenerator.getInstance().generateId();
-            this.bookingReference = "FLT-" + IdGenerator.getInstance().toString().substring(0, 8);
-            this.bookingDate = LocalDateTime.now();
-            this.lastModified = LocalDateTime.now();
-            this.status = BookingStatus.PENDING;
-            this.currency = "ZAR";
 
+        public Builder setBookingId(Long bookingId) {
+            this.bookingId = bookingId;
+            return this;
+        }
+
+        public Builder setBookingReference(String bookingReference) {
+            this.bookingReference = bookingReference;
+            return this;
+        }
+
+        public Builder setBookingDate(LocalDateTime bookingDate) {
+            this.bookingDate = bookingDate;
+            return this;
+        }
+
+        public Builder setLastModified(LocalDateTime lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Builder setStatus(BookingStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setSubtotal(double subtotal) {
+            this.subtotal = subtotal;
+            return this;
+        }
+
+        public Builder setTaxes(double taxes) {
+            this.taxes = taxes;
+            return this;
+        }
+
+        public Builder setTotalPrice(double totalPrice) {
+            this.totalPrice = totalPrice;
+            return this;
+        }
+
+        public Builder setCurrency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public Builder setBookedBy(Customer bookedBy) {
+            this.bookedBy = bookedBy;
+            return this;
+        }
+
+        public Builder setTravelers(Traveler travelers) {
+            this.travelers = travelers;
+            return this;
+        }
+
+        public Builder setPayment(PaymentDetails payment) {
+            this.payment = payment;
+            return this;
+        }
+
+        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
+            this.cancellationPolicy = cancellationPolicy;
+            return this;
+        }
+
+        public Builder setFlightNumber(String flightNumber) {
             this.flightNumber = flightNumber;
+            return this;
+        }
+
+        public Builder setAirline(String airline) {
             this.airline = airline;
+            return this;
+        }
+
+        public Builder setJourneyType(FJourney journeyType) {
+            this.journeyType = journeyType;
+            return this;
+        }
+
+        public Builder setFromLocation(String fromLocation) {
             this.fromLocation = fromLocation;
+            return this;
+        }
+
+        public Builder setToLocation(String toLocation) {
             this.toLocation = toLocation;
+            return this;
+        }
+
+        public Builder setDepartureTime(LocalDateTime departureTime) {
             this.departureTime = departureTime;
+            return this;
         }
 
         public Builder setArrivalTime(LocalDateTime arrivalTime) {
@@ -199,8 +296,13 @@ public class FlightBooking  extends Booking {
             return this;
         }
 
-        public Builder setJourneyType(FJourney journeyType) {
-            this.journeyType = journeyType;
+        public Builder setDepartureTerminal(String departureTerminal) {
+            this.departureTerminal = departureTerminal;
+            return this;
+        }
+
+        public Builder setArrivalTerminal(String arrivalTerminal) {
+            this.arrivalTerminal = arrivalTerminal;
             return this;
         }
 
@@ -229,6 +331,16 @@ public class FlightBooking  extends Booking {
             return this;
         }
 
+        public Builder setMealPreferences(List<String> mealPreferences) {
+            this.mealPreferences = mealPreferences;
+            return this;
+        }
+
+        public Builder setSpecialAssistance(List<String> specialAssistance) {
+            this.specialAssistance = specialAssistance;
+            return this;
+        }
+
         public Builder setBaggageAllowance(double baggageAllowance) {
             this.baggageAllowance = baggageAllowance;
             return this;
@@ -236,41 +348,6 @@ public class FlightBooking  extends Booking {
 
         public Builder setTravelInsurance(boolean travelInsurance) {
             this.travelInsurance = travelInsurance;
-            return this;
-        }
-
-        public Builder setBookedBy(Customer bookedBy) {
-            this.bookedBy = bookedBy;
-            return this;
-        }
-
-        public Builder setTravelers(Traveler travelers) {
-            this.travelers = travelers;
-            return this;
-        }
-
-        public Builder setPayment(PaymentDetails payment) {
-            this.payment = payment;
-            return this;
-        }
-
-        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
-            this.cancellationPolicy = cancellationPolicy;
-            return this;
-        }
-
-        public Builder setSubtotal(double subtotal) {
-            this.subtotal = subtotal;
-            return this;
-        }
-
-        public Builder setTaxes(double taxes) {
-            this.taxes = taxes;
-            return this;
-        }
-
-        public Builder setTotalPrice(double totalPrice) {
-            this.totalPrice = totalPrice;
             return this;
         }
 

@@ -2,39 +2,42 @@ package za.ac.cput.factory;
 
 import za.ac.cput.domain.ContactDetails;
 import za.ac.cput.util.Helper;
+import za.ac.cput.util.IdGenerator;
 
 public class ContactDetailsFactory {
 
-    // Basic Contact with required fields
-    public static ContactDetails createContact(String cellNumber, String email) {
-        Helper.requireNotEmptyOrNull(cellNumber, "Cell Number");
-        Helper.requireNotEmptyOrNull(email, "Email");
+    private static final IdGenerator idGenerator = new IdGenerator();
 
-        if (!Helper.isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format: " + email);
-        }
+    /**
+     * Creates basic contact details
+     */
+    public static ContactDetails createContactDetails(String cellNumber, String email,String homePhone,
+                                                      String workPhone,
+                                                      String emergencyContact,
+                                                      String emergencyPhone) {
+        Helper.requireValidSouthAfricanPhone(cellNumber, "Cell Number");
+        Helper.requireValidEmail(email, "Email");
 
-        Helper.isValidSouthAfricanPhone(cellNumber);
+        Long contactId = idGenerator.generateLongId();
 
-        return new ContactDetails.Builder(cellNumber, email)
+        return new ContactDetails.Builder()
+                .setContactId(contactId)
+                .setCellNumber(cellNumber)
+                .setEmail(email)
                 .build();
+
     }
 
-    // Full Contact Details with emergency contacts
-    public static ContactDetails createFullContact(String cellNumber, String email,
-                                                   String homePhone, String workPhone,
-                                                   String emergencyContact,
-                                                   String emergencyPhone) {
-        ContactDetails contact = createContact(cellNumber, email);
-Helper.requireNotEmptyOrNull(cellNumber,"Cell Number");
-Helper.requireNotEmptyOrNull(homePhone, "Home Number");
-Helper.requireNotEmptyOrNull(workPhone, "Work Phone");
-Helper.requireNotEmptyOrNull(emergencyContact, "Emergency Contact");
-Helper.requireNotEmptyOrNull(emergencyPhone, "Emergency Phone");
-        if (!Helper.isValidEmail(email)) {
-            throw new IllegalArgumentException("Invalid email format: " + email);
-        }
-        return new ContactDetails.Builder(cellNumber, email)
+    /**
+     * Creates full contact details with optional fields
+     */
+    public static ContactDetails createFullContactDetails(String cellNumber, String email,
+                                                          String homePhone, String workPhone,
+                                                          String emergencyContact, String emergencyPhone) {
+        ContactDetails contact = createContactDetails(cellNumber, email);
+
+        return new ContactDetails.Builder()
+                .copy(contact)
                 .setHomePhone(homePhone)
                 .setWorkPhone(workPhone)
                 .setEmergencyContact(emergencyContact)

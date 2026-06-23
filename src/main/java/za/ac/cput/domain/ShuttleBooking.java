@@ -1,12 +1,25 @@
 package za.ac.cput.domain;
+/* Location.java
 
+   Location POJO class
+
+   Author: Kabelo Moloko (230117015)
+
+   Date: 21 June 2026
+*/
+import jakarta.persistence.*;
 import za.ac.cput.util.IdGenerator;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+@Entity
+@PrimaryKeyJoinColumn(name = "booking_id")
 public class ShuttleBooking extends TransportBooking {
+
+    @Id
     private String shuttleId;
+    @Enumerated(EnumType.STRING)
     private ShuttleCompanies company;
     private String pickUpLocation;
     private String dropOffLocation;
@@ -24,8 +37,10 @@ public class ShuttleBooking extends TransportBooking {
     private boolean wheelchairAccessible;
     private double estimatedDistance;
 
+ protected ShuttleBooking(){}
+
     private ShuttleBooking(Builder builder) {
-        // Booking fields
+
         this.bookingId = builder.bookingId;
         this.bookingReference = builder.bookingReference;
         this.bookingDate = builder.bookingDate;
@@ -40,14 +55,12 @@ public class ShuttleBooking extends TransportBooking {
         this.payment = builder.payment;
         this.cancellationPolicy = builder.cancellationPolicy;
 
-        // TransportBooking fields
         this.transportId = builder.transportId;
         this.provider = builder.provider;
         this.vehicleType = builder.vehicleType;
         this.bookingTime = builder.bookingTime;
         this.distance = builder.distance;
         this.specialInstructions = builder.specialInstructions;
-
         // Shuttle specific fields
         this.shuttleId = builder.shuttleId;
         this.company = builder.company;
@@ -122,7 +135,7 @@ public class ShuttleBooking extends TransportBooking {
 
     @Override
     public Invoice generateInvoice() {
-        return new Invoice.Builder(this).build();
+        return new Invoice.Builder().build();
     }
 
     @Override
@@ -180,22 +193,124 @@ public class ShuttleBooking extends TransportBooking {
         private boolean wheelchairAccessible;
         private double estimatedDistance;
 
-        public Builder(ShuttleCompanies company, String pickUpLocation,
-                       String dropOffLocation, LocalDateTime pickupTime) {
-            this.bookingId = IdGenerator.getInstance().generateId();
-            this.bookingReference = "SHT-" + IdGenerator.getInstance().toString().substring(0, 8);
-            this.bookingDate = LocalDateTime.now();
-            this.lastModified = LocalDateTime.now();
-            this.status = BookingStatus.PENDING;
-            this.currency = "ZAR";
-            this.bookingTime = LocalDateTime.now();
+        public Builder setBookingId(Long bookingId) {
+            this.bookingId = bookingId;
+            return this;
+        }
 
-            this.shuttleId = IdGenerator.getInstance().toString();
+        public Builder setBookingReference(String bookingReference) {
+            this.bookingReference = bookingReference;
+            return this;
+        }
+
+        public Builder setBookingDate(LocalDateTime bookingDate) {
+            this.bookingDate = bookingDate;
+            return this;
+        }
+
+        public Builder setLastModified(LocalDateTime lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Builder setStatus(BookingStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setSubtotal(double subtotal) {
+            this.subtotal = subtotal;
+            return this;
+        }
+
+        public Builder setTaxes(double taxes) {
+            this.taxes = taxes;
+            return this;
+        }
+
+        public Builder setTotalPrice(double totalPrice) {
+            this.totalPrice = totalPrice;
+            return this;
+        }
+
+        public Builder setCurrency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public Builder setBookedBy(Customer bookedBy) {
+            this.bookedBy = bookedBy;
+            return this;
+        }
+
+        public Builder setTravelers(Traveler travelers) {
+            this.travelers = travelers;
+            return this;
+        }
+
+        public Builder setPayment(PaymentDetails payment) {
+            this.payment = payment;
+            return this;
+        }
+
+        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
+            this.cancellationPolicy = cancellationPolicy;
+            return this;
+        }
+
+        public Builder setTransportId(String transportId) {
+            this.transportId = transportId;
+            return this;
+        }
+
+        public Builder setProvider(String provider) {
+            this.provider = provider;
+            return this;
+        }
+
+        public Builder setVehicleType(VehicleType vehicleType) {
+            this.vehicleType = vehicleType;
+            return this;
+        }
+
+        public Builder setBookingTime(LocalDateTime bookingTime) {
+            this.bookingTime = bookingTime;
+            return this;
+        }
+
+        public Builder setDistance(double distance) {
+            this.distance = distance;
+            return this;
+        }
+
+        public Builder setSpecialInstructions(String specialInstructions) {
+            this.specialInstructions = specialInstructions;
+            return this;
+        }
+
+        public Builder setShuttleId(String shuttleId) {
+            this.shuttleId = shuttleId;
+            return this;
+        }
+
+        public Builder setCompany(ShuttleCompanies company) {
             this.company = company;
-            this.provider = company.toString();
+            return this;
+        }
+
+        public Builder setPickUpLocation(String pickUpLocation) {
             this.pickUpLocation = pickUpLocation;
+            return this;
+        }
+
+        public Builder setDropOffLocation(String dropOffLocation) {
             this.dropOffLocation = dropOffLocation;
+            return this;
+        }
+
+        public Builder setPickupTime(LocalDateTime pickupTime) {
             this.pickupTime = pickupTime;
+            return this;
         }
 
         public Builder setEstimatedDropoffTime(LocalDateTime estimatedDropoffTime) {
@@ -228,11 +343,6 @@ public class ShuttleBooking extends TransportBooking {
             return this;
         }
 
-        public Builder setVehicleType(VehicleType vehicleType) {
-            this.vehicleType = vehicleType;
-            return this;
-        }
-
         public Builder setLicensePlate(String licensePlate) {
             this.licensePlate = licensePlate;
             return this;
@@ -260,51 +370,6 @@ public class ShuttleBooking extends TransportBooking {
 
         public Builder setEstimatedDistance(double estimatedDistance) {
             this.estimatedDistance = estimatedDistance;
-            return this;
-        }
-
-        public Builder setDistance(double distance) {
-            this.distance = distance;
-            return this;
-        }
-
-        public Builder setSpecialInstructions(String specialInstructions) {
-            this.specialInstructions = specialInstructions;
-            return this;
-        }
-
-        public Builder setBookedBy(Customer bookedBy) {
-            this.bookedBy = bookedBy;
-            return this;
-        }
-
-        public Builder setTravelers(Traveler travelers) {
-            this.travelers = travelers;
-            return this;
-        }
-
-        public Builder setPayment(PaymentDetails payment) {
-            this.payment = payment;
-            return this;
-        }
-
-        public Builder setCancellationPolicy(CancellationPolicy cancellationPolicy) {
-            this.cancellationPolicy = cancellationPolicy;
-            return this;
-        }
-
-        public Builder setSubtotal(double subtotal) {
-            this.subtotal = subtotal;
-            return this;
-        }
-
-        public Builder setTaxes(double taxes) {
-            this.taxes = taxes;
-            return this;
-        }
-
-        public Builder setTotalPrice(double totalPrice) {
-            this.totalPrice = totalPrice;
             return this;
         }
 
